@@ -62,7 +62,7 @@ const Interactions = {
             if (this.draggedSeed && e.target.classList.contains('garden-cell')) {
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'move';
-                
+
                 // Visual feedback
                 if (!e.target.classList.contains('occupied')) {
                     e.target.style.backgroundColor = 'rgba(74, 124, 89, 0.3)';
@@ -78,7 +78,7 @@ const Interactions = {
 
         document.addEventListener('drop', (e) => {
             e.preventDefault();
-            
+
             if (this.draggedSeed && e.target.classList.contains('garden-cell')) {
                 // Reset background
                 e.target.style.backgroundColor = '';
@@ -92,7 +92,7 @@ const Interactions = {
                 // Get entry
                 const entries = Storage.getEntries();
                 const entry = entries.find(ent => ent.id === this.draggedSeed);
-                
+
                 if (!entry) {
                     this.showNotification('Seed not found!', 'error');
                     return;
@@ -104,7 +104,7 @@ const Interactions = {
 
                 // Create plant
                 const plant = Garden.createPlant(entry, x, y);
-                
+
                 // Remove seed from inventory
                 const seedElement = document.querySelector(`[data-entry-id="${this.draggedSeed}"]`);
                 if (seedElement) {
@@ -120,7 +120,7 @@ const Interactions = {
                 setTimeout(() => e.target.classList.remove('plant'), 1000);
 
                 this.showNotification('Seed planted! 🌱', 'success');
-                
+
                 this.draggedSeed = null;
             }
         });
@@ -129,6 +129,7 @@ const Interactions = {
     // Setup click to water
     setupClickToWater() {
         document.addEventListener('click', (e) => {
+            if (!(e.target instanceof Element)) return;
             const cell = e.target.closest('.garden-cell');
             if (!cell) return;
 
@@ -150,22 +151,23 @@ const Interactions = {
     setupHover() {
         // Hover over plants
         document.addEventListener('mouseenter', (e) => {
+            if (!(e.target instanceof Element)) return;
             const cell = e.target.closest('.garden-cell');
             if (cell && cell.classList.contains('occupied')) {
                 const plantId = cell.dataset.plantId;
                 const plant = Storage.getPlants().find(p => p.id === plantId);
-                
+
                 if (plant) {
                     const plantData = Garden.PLANT_TYPES[plant.type] || Garden.PLANT_TYPES.basic;
                     const stageNames = ['Seed', 'Sprout', 'Bud', 'Flower', 'Mature'];
                     const plantedDate = new Date(plant.plantedDate);
                     const daysOld = Math.floor((Date.now() - plantedDate) / (1000 * 60 * 60 * 24));
-                    
+
                     const tooltipText = `${plantData.stages[plant.stage]} ${stageNames[plant.stage]}\n` +
                                       `Planted: ${daysOld} day${daysOld !== 1 ? 's' : ''} ago\n` +
                                       `Watered: ${plant.waterCount || 1} time${(plant.waterCount || 1) !== 1 ? 's' : ''}\n` +
                                       `Click to water 💧`;
-                    
+
                     this.showTooltip(cell, tooltipText, e);
                 }
             }
@@ -173,11 +175,12 @@ const Interactions = {
 
         // Hover over seeds
         document.addEventListener('mouseenter', (e) => {
+            if (!(e.target instanceof Element)) return;
             if (e.target.classList.contains('seed-item')) {
                 const entryId = e.target.dataset.entryId;
                 const entries = Storage.getEntries();
                 const entry = entries.find(ent => ent.id === entryId);
-                
+
                 if (entry) {
                     const entryDate = new Date(entry.date);
                     const tooltipText = `Drag to plant\n"${entry.text.substring(0, 50)}${entry.text.length > 50 ? '...' : ''}"\n${entryDate.toLocaleDateString()}`;
@@ -188,7 +191,8 @@ const Interactions = {
 
         // Hide tooltip on mouse leave
         document.addEventListener('mouseleave', (e) => {
-            if (e.target.classList.contains('garden-cell') || 
+            if (!(e.target instanceof Element)) return;
+            if (e.target.classList.contains('garden-cell') ||
                 e.target.classList.contains('seed-item')) {
                 this.hideTooltip();
             }
@@ -209,4 +213,3 @@ const Interactions = {
         }, 3000);
     }
 };
-
