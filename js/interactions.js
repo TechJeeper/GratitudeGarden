@@ -138,7 +138,13 @@ const Interactions = {
                 if (plantId) {
                     const result = Garden.waterPlant(plantId);
                     if (result.success) {
-                        this.showNotification(result.message, 'success');
+                        const plant = Storage.getPlants().find(p => p.id === plantId);
+                        const entry = Storage.getEntries().find(e => e.id === plant.entryId);
+                        if (entry) {
+                            this.showNotification(`"${entry.text}"`, 'gratitude');
+                        } else {
+                            this.showNotification(result.message, 'success');
+                        }
                     } else {
                         this.showNotification(result.message, 'error');
                     }
@@ -166,7 +172,7 @@ const Interactions = {
                     const tooltipText = `${plantData.stages[plant.stage]} ${stageNames[plant.stage]}\n` +
                                       `Planted: ${daysOld} day${daysOld !== 1 ? 's' : ''} ago\n` +
                                       `Watered: ${plant.waterCount || 1} time${(plant.waterCount || 1) !== 1 ? 's' : ''}\n` +
-                                      `Click to water 💧`;
+                                      `Click to water & see gratitude`;
 
                     this.showTooltip(cell, tooltipText, e);
                 }
