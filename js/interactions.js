@@ -136,17 +136,14 @@ const Interactions = {
             if (cell.classList.contains('occupied')) {
                 const plantId = cell.dataset.plantId;
                 if (plantId) {
-                    const result = Garden.waterPlant(plantId);
-                    if (result.success) {
-                        const plant = Storage.getPlants().find(p => p.id === plantId);
-                        const entry = Storage.getEntries().find(e => e.id === plant.entryId);
-                        if (entry) {
-                            this.showNotification(`"${entry.text}"`, 'gratitude');
-                        } else {
-                            this.showNotification(result.message, 'success');
-                        }
+                    const plant = Storage.getPlants().find(p => p.id === plantId);
+                    const entry = Storage.getEntries().find(e => e.id === plant.entryId);
+
+                    if (entry) {
+                        this.showNotification(`"${entry.text}"`, 'gratitude');
                     } else {
-                        this.showNotification(result.message, 'error');
+                        const result = Garden.waterPlant(plantId);
+                        this.showNotification(result.message, result.success ? 'success' : 'error');
                     }
                 }
             }
