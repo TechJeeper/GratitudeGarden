@@ -234,5 +234,22 @@ const Garden = {
         return Storage.getPlants().find(p =>
             parseInt(p.x) === parseInt(x) && parseInt(p.y) === parseInt(y)
         );
+    },
+
+    // Remove plant from garden
+    removePlant(plantId) {
+        // Remove from UI
+        const cell = document.querySelector(`[data-plant-id="${plantId}"]`);
+        if (cell) {
+            cell.classList.remove('occupied', 'plant-seed', 'plant-sprout', 'plant-mature');
+            cell.textContent = '';
+            delete cell.dataset.plantId;
+            delete cell.dataset.stage;
+        }
+
+        // Remove from storage
+        Storage.deletePlant(plantId);
+
+        this.updatePlantCount();
     }
 };

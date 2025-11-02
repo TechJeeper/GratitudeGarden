@@ -3,12 +3,15 @@
 const Interactions = {
     draggedSeed: null,
     tooltip: null,
+    circularMenu: null,
+    currentPlantId: null,
 
     init() {
         this.setupTooltip();
         this.setupDragAndDrop();
-        this.setupClickToWater();
+        this.setupPlantClick();
         this.setupHover();
+        this.setupCircularMenu();
     },
 
     // Setup tooltip element
@@ -126,28 +129,75 @@ const Interactions = {
         });
     },
 
-    // Setup click to water
-    setupClickToWater() {
+    // Setup click on plant
+    setupPlantClick() {
         document.addEventListener('click', (e) => {
             if (!(e.target instanceof Element)) return;
             const cell = e.target.closest('.garden-cell');
-            if (!cell) return;
 
-            if (cell.classList.contains('occupied')) {
-                const plantId = cell.dataset.plantId;
-                if (plantId) {
-                    const plant = Storage.getPlants().find(p => p.id === plantId);
-                    const entry = Storage.getEntries().find(e => e.id === plant.entryId);
-
-                    if (entry) {
-                        this.showNotification(`"${entry.text}"`, 'gratitude');
-                    } else {
-                        const result = Garden.waterPlant(plantId);
-                        this.showNotification(result.message, result.success ? 'success' : 'error');
-                    }
-                }
+            if (cell && cell.classList.contains('occupied')) {
+                this.currentPlantId = cell.dataset.plantId;
+                this.showCircularMenu(cell);
             }
         });
+    },
+
+    // Setup circular menu
+    setupCircularMenu() {
+        this.circularMenu = document.getElementById('circularMenu');
+
+        this.circularMenu.addEventListener('click', (e) => {
+            const button = e.target.closest('.menu-button');
+            if (!button) return;
+
+            const action = button.dataset.action;
+            if (!this.currentPlantId) return;
+
+            const plant = Storage.getPlants().find(p => p.id === this.currentPlantId);
+            if (!plant) return;
+
+            if (action === 'show') {
+                const entry = Storage.getEntries().find(e => e.id === plant.entryId);
+                if (entry) {
+                    this.showNotification(`"${entry.text}"`, 'gratitude');
+                }
+            } else if (action === 'water') {
+                const result = Garden.waterPlant(this.currentPlantId);
+                this.showNotification(result.message, result.success ? 'success' : 'error');
+            } else if (action === 'pick') {
+                if (confirm('Are you sure you want to remove this plant? This cannot be undone.')) {
+                    Garden.removePlant(this.currentPlantId);
+                    this.showNotification('Plant removed.', 'success');
+                }
+            }
+
+            this.hideCircularMenu();
+        });
+
+        // Hide menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.circularMenu.contains(e.target) && !e.target.closest('.garden-cell')) {
+                this.hideCircularMenu();
+            }
+        });
+    },
+
+    // Show circular menu
+    showCircularMenu(cell) {
+        const rect = cell.getBoundingClientRect();
+        this.circularMenu.style.left = `${rect.left + rect.width / 2}px`;
+        this.circularMenu.style.top = `${rect.top + rect.height / 2}px`;
+        this.circularMenu.style.display = 'block';
+        setTimeout(() => this.circularMenu.classList.add('active'), 10);
+    },
+
+    // Hide circular menu
+    hideCircularMenu() {
+        this.circularMenu.classList.remove('active');
+        setTimeout(() => {
+            this.circularMenu.style.display = 'none';
+            this.currentPlantId = null;
+        }, 200);
     },
 
     // Setup hover for details
