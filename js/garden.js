@@ -13,7 +13,9 @@ const Garden = {
     // Plant types and their emojis
     PLANT_TYPES: {
         basic: { emoji: '🌱', stages: ['🌱', '🌿', '🍀', '🌻', '🌺'] },
-        flower: { emoji: '🌸', stages: ['🌱', '🌿', '🌼', '🌸', '🌺'] },
+        flower_1: { emoji: '🌸', stages: ['🌱', '🌿', '🌼', '🌸', '🌺'] },
+        flower_2: { emoji: '🌷', stages: ['🌱', '🌿', '🌷', '🌹', '💐'] },
+        flower_3: { emoji: '🌻', stages: ['🌱', '🌿', '🌻', '🌞', '☀️'] },
         tree: { emoji: '🌳', stages: ['🌱', '🌿', '🌲', '🌳', '🌴'] },
         fruit: { emoji: '🍓', stages: ['🌱', '🌿', '🌼', '🍓', '🍇'] }
     },
@@ -56,15 +58,23 @@ const Garden = {
     // Create plant from entry
     createPlant(entry, x, y) {
         const plantId = `plant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        
+
         // Determine plant type based on unlocks and entry count
         const profile = Storage.getProfile();
         const unlockedItems = profile.unlockedItems || [];
-        
-        let plantType = 'basic';
-        if (unlockedItems.includes('flower')) plantType = 'flower';
-        if (unlockedItems.includes('tree')) plantType = 'tree';
-        if (unlockedItems.includes('fruit')) plantType = 'fruit';
+
+        let availableTypes = ['basic'];
+        if (unlockedItems.includes('flower')) {
+            availableTypes.push('flower_1', 'flower_2', 'flower_3');
+        }
+        if (unlockedItems.includes('tree')) {
+            availableTypes.push('tree');
+        }
+        if (unlockedItems.includes('fruit')) {
+            availableTypes.push('fruit');
+        }
+
+        const plantType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
 
         const plant = {
             id: plantId,
@@ -82,7 +92,7 @@ const Garden = {
         Storage.savePlant(plant);
         this.renderPlant(plant);
         this.updatePlantCount();
-        
+
         return plant;
     },
 
@@ -94,13 +104,13 @@ const Garden = {
         cell.classList.add('occupied');
         cell.dataset.plantId = plant.id;
         cell.dataset.stage = plant.stage;
-        
+
         const plantData = this.PLANT_TYPES[plant.type] || this.PLANT_TYPES.basic;
         const emoji = plantData.stages[plant.stage] || '🌱';
-        
+
         cell.textContent = emoji;
         cell.classList.add('plant-seed');
-        
+
         // Add stage-specific class
         if (plant.stage === this.STAGES.SPROUT) {
             cell.classList.add('plant-sprout');
@@ -112,8 +122,8 @@ const Garden = {
     // Get cell at coordinates
     getCellAt(x, y) {
         const cells = document.querySelectorAll('.garden-cell');
-        return Array.from(cells).find(cell => 
-            parseInt(cell.dataset.x) === parseInt(x) && 
+        return Array.from(cells).find(cell =>
+            parseInt(cell.dataset.x) === parseInt(x) &&
             parseInt(cell.dataset.y) === parseInt(y)
         );
     },
@@ -184,10 +194,10 @@ const Garden = {
         if (cell) {
             cell.classList.add('growing');
             cell.dataset.stage = newStage;
-            
+
             const plantData = this.PLANT_TYPES[plant.type] || this.PLANT_TYPES.basic;
             cell.textContent = plantData.stages[newStage] || '🌱';
-            
+
             // Update classes
             cell.classList.remove('plant-seed', 'plant-sprout', 'plant-mature');
             if (newStage === this.STAGES.SPROUT) {
@@ -221,9 +231,8 @@ const Garden = {
 
     // Get plant at coordinates
     getPlantAt(x, y) {
-        return Storage.getPlants().find(p => 
+        return Storage.getPlants().find(p =>
             parseInt(p.x) === parseInt(x) && parseInt(p.y) === parseInt(y)
         );
     }
 };
-
