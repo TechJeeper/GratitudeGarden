@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratitude Garden</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/weather.css">
+</head>
+<body>
+    <div class="weather-overlay" id="weatherOverlay"></div>
+    
+    <header class="header">
+        <div class="header-content">
+            <h1>🌱 Gratitude Garden</h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Streak:</span>
+                    <span class="stat-value" id="streakCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Entries:</span>
+                    <span class="stat-value" id="totalEntries">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Plants:</span>
+                    <span class="stat-value" id="plantCount">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <aside class="sidebar">
+            <section class="entry-section">
+                <h2>Plant Your Gratitude</h2>
+                <form id="entryForm" class="entry-form">
+                    <textarea 
+                        id="gratitudeInput" 
+                        class="gratitude-input" 
+                        placeholder="What are you grateful for today?"
+                        rows="4"
+                        required
+                    ></textarea>
+                    <button type="submit" class="submit-btn">Plant Seed 🌱</button>
+                </form>
+                
+                <div class="seed-inventory" id="seedInventory">
+                    <p class="inventory-label">Your Seeds:</p>
+                    <div class="seeds-container" id="seedsContainer">
+                        <!-- Seeds will be added here dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="unlocks-section">
+                <h3>Unlocked Items</h3>
+                <div class="unlocks-grid" id="unlocksGrid">
+                    <!-- Unlocked items will be displayed here -->
+                </div>
+            </section>
+
+            <section class="social-section">
+                <h3>Visit Friends</h3>
+                <div class="friend-code-section">
+                    <p>Your Friend Code:</p>
+                    <div class="friend-code" id="friendCode">-</div>
+                    <button id="copyCodeBtn" class="copy-btn">Copy</button>
+                </div>
+                <div class="visit-friend-section">
+                    <input type="text" id="friendCodeInput" placeholder="Enter friend code" class="friend-input">
+                    <button id="visitFriendBtn" class="visit-btn">Visit Garden</button>
+                </div>
+            </section>
+        </aside>
+
+        <section class="garden-section">
+            <div class="garden-container">
+                <div class="garden-grid" id="gardenGrid">
+                    <!-- Garden cells will be generated dynamically -->
+                </div>
+            </div>
+            <div class="garden-info">
+                <p>Drag seeds to plant • Click to water • Hover for details</p>
+            </div>
+        </section>
+    </main>
+
+    <div class="tooltip" id="tooltip"></div>
+    <div class="notification" id="notification"></div>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/streak.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/garden.js"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
