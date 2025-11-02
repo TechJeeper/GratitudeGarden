@@ -435,3 +435,55 @@ body {
     }
 }
 
+/* Circular Menu */
+.circular-menu {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(45, 74, 58, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transform: scale(0);
+    transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    pointer-events: none;
+}
+
+.circular-menu.active {
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.menu-button {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--primary-green);
+    color: var(--white);
+    border: 2px solid var(--white);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.menu-button:hover {
+    background: var(--dark-green);
+    transform: scale(1.15);
+}
+
+.menu-button[data-action="show"] {
+    transform: translate(0, -50px);
+}
+.menu-button[data-action="water"] {
+    transform: translate(-43px, 25px);
+}
+.menu-button[data-action="pick"] {
+    transform: translate(43px, 25px);
+}
+
