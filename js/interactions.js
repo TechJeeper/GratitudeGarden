@@ -134,18 +134,10 @@ const Interactions = {
         document.addEventListener('click', (e) => {
             if (!(e.target instanceof Element)) return;
             const cell = e.target.closest('.garden-cell');
-            const isMenuButton = e.target.closest('.menu-button');
-
-            if (isMenuButton) {
-                // Menu button logic is handled in setupCircularMenu
-                return;
-            }
 
             if (cell && cell.classList.contains('occupied')) {
                 this.currentPlantId = cell.dataset.plantId;
                 this.showCircularMenu(cell);
-            } else {
-                this.hideCircularMenu();
             }
         });
     },
@@ -177,6 +169,15 @@ const Interactions = {
                     Garden.removePlant(this.currentPlantId);
                     this.showNotification('Plant removed.', 'success');
                 }
+            }
+
+            this.hideCircularMenu();
+        });
+
+        // Hide menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.circularMenu.contains(e.target) && !e.target.closest('.garden-cell')) {
+                this.hideCircularMenu();
             }
 
             this.hideCircularMenu();
