@@ -9,7 +9,7 @@ const App = {
         Garden.init();
         Interactions.init();
         WeatherSystem.update();
-        
+
         // Check for friend code in URL
         this.checkFriendCode();
     },
@@ -17,7 +17,7 @@ const App = {
     // Initialize profile
     initProfile() {
         const profile = Storage.getProfile();
-        
+
         // Display friend code
         const friendCodeEl = document.getElementById('friendCode');
         if (friendCodeEl) {
@@ -94,9 +94,6 @@ const App = {
         // Update display
         this.updateDisplay();
 
-        // Add seed to inventory
-        this.addSeedToInventory(entry);
-
         // Update weather
         WeatherSystem.update();
 
@@ -132,7 +129,7 @@ const App = {
     updateSeedInventory() {
         const entries = Storage.getEntries();
         const plants = Storage.getPlants();
-        
+
         // Get entry IDs that are already planted
         const plantedEntryIds = new Set(plants.map(p => p.entryId));
 
@@ -165,7 +162,7 @@ const App = {
         seedEl.textContent = '🌱';
         seedEl.draggable = true;
         container.appendChild(seedEl);
-        
+
         setTimeout(() => {
             seedEl.classList.remove('seed-dropping');
         }, 400);
@@ -214,12 +211,12 @@ const App = {
                     'streak-bonus': '🎉 Unlocked: Streak Bonus!',
                     'master-gardener': '🏆 Master Gardener Achieved!'
                 };
-                
+
                 setTimeout(() => {
                     Interactions.showNotification(messages[unlock] || 'New unlock!', 'achievement');
                 }, newUnlocks.indexOf(unlock) * 1000);
             });
-            
+
             this.updateUnlocks();
         }
     },
@@ -243,7 +240,7 @@ const App = {
         allUnlocks.forEach(unlock => {
             const unlockEl = document.createElement('div');
             unlockEl.className = 'unlock-item';
-            
+
             if (unlocks.includes(unlock.id)) {
                 unlockEl.textContent = unlock.emoji;
                 unlockEl.title = unlock.name;
@@ -252,7 +249,7 @@ const App = {
                 unlockEl.textContent = '🔒';
                 unlockEl.title = `Locked: ${unlock.name}`;
             }
-            
+
             container.appendChild(unlockEl);
         });
     },
@@ -261,12 +258,12 @@ const App = {
     checkFriendCode() {
         const urlParams = new URLSearchParams(window.location.search);
         const friendCode = urlParams.get('friend');
-        
+
         if (friendCode) {
             // For now, show a message (social features would need a backend)
             // In a real implementation, you'd fetch friend's garden data
             Interactions.showNotification(`Friend code: ${friendCode}\n(Full social features require backend)`, 'success');
-            
+
             // Remove friend parameter after showing
             window.history.replaceState({}, document.title, window.location.pathname);
         }
@@ -279,4 +276,3 @@ if (document.readyState === 'loading') {
 } else {
     App.init();
 }
-
