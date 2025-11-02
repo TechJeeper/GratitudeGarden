@@ -179,6 +179,8 @@ const Interactions = {
             if (!this.circularMenu.contains(e.target) && !e.target.closest('.garden-cell')) {
                 this.hideCircularMenu();
             }
+
+            this.hideCircularMenu();
         });
     },
 
